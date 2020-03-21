@@ -9,18 +9,25 @@ class _AuthenState extends State<Authen> {
 // Field
 
 // Method
+  Widget showAppName() {
+    return Text('Nuan Rice');
+  }
 
   Widget showLogo() {
-    return Center(child: Container(
+    return Container(
       width: 120.0,
       child: Image.asset('images/logo.png'),
-    ),);
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: showLogo(),
+      body: Center(
+        child: Column(mainAxisSize: MainAxisSize.min,
+          children: <Widget>[showLogo(), showAppName()],
+        ),
+      ),
     );
   }
 }
