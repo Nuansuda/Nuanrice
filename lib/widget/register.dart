@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:nuanrice/utility/normal_dialog.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -13,6 +14,7 @@ class _RegisterState extends State<Register> {
   // Field
 
   File file;
+  String name, username, password, urlPath;
 
   // Method
 
@@ -21,6 +23,7 @@ class _RegisterState extends State<Register> {
     String title = 'Name :';
     String help = 'Type Your Name In Blank';
     return TextField(
+      onChanged: (value) => name = value.trim(),
       decoration: InputDecoration(
         enabledBorder:
             UnderlineInputBorder(borderSide: BorderSide(color: color)),
@@ -42,6 +45,7 @@ class _RegisterState extends State<Register> {
     String title = 'Username :';
     String help = 'Type Your User In Blank';
     return TextField(
+      onChanged: (value) => username = value.trim(),
       decoration: InputDecoration(
         enabledBorder:
             UnderlineInputBorder(borderSide: BorderSide(color: color)),
@@ -63,6 +67,7 @@ class _RegisterState extends State<Register> {
     String title = 'Password :';
     String help = 'Type Your Password In Blank';
     return TextField(
+      onChanged: (value) => password = value.trim(),
       decoration: InputDecoration(
         enabledBorder:
             UnderlineInputBorder(borderSide: BorderSide(color: color)),
@@ -113,7 +118,20 @@ class _RegisterState extends State<Register> {
         Icons.description,
         size: 40.0,
       ),
-      onPressed: () {},
+      onPressed: () {
+        if (file == null) {
+          normalDialog(context, 'Non Choose Avartar',
+              'Please Click Images for Open Camera');
+        } else if (name == null ||
+            name.isEmpty ||
+            username == null ||
+            username.isEmpty ||
+            password == null ||
+            password.isEmpty) {
+          normalDialog(context, 'Have Space', 'Please Your push Data');
+        } else {}
+        {}
+      },
     );
   }
 
