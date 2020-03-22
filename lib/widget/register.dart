@@ -1,4 +1,8 @@
+import 'dart:ffi';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -8,6 +12,8 @@ class Register extends StatefulWidget {
 class _RegisterState extends State<Register> {
   // Field
 
+  File file;
+
   // Method
 
   Widget nameForm() {
@@ -16,7 +22,8 @@ class _RegisterState extends State<Register> {
     String help = 'Type Your Name In Blank';
     return TextField(
       decoration: InputDecoration(
-        enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: color)),
+        enabledBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: color)),
         helperStyle: TextStyle(color: color),
         helperText: help,
         labelStyle: TextStyle(color: Colors.brown),
@@ -36,7 +43,8 @@ class _RegisterState extends State<Register> {
     String help = 'Type Your User In Blank';
     return TextField(
       decoration: InputDecoration(
-        enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: color)),
+        enabledBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: color)),
         helperStyle: TextStyle(color: color),
         helperText: help,
         labelStyle: TextStyle(color: Colors.brown),
@@ -56,7 +64,8 @@ class _RegisterState extends State<Register> {
     String help = 'Type Your Password In Blank';
     return TextField(
       decoration: InputDecoration(
-        enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: color)),
+        enabledBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: color)),
         helperStyle: TextStyle(color: color),
         helperText: help,
         labelStyle: TextStyle(color: Colors.brown),
@@ -71,11 +80,31 @@ class _RegisterState extends State<Register> {
   }
 
   Widget showAvartar() {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.3,
-      width: MediaQuery.of(context).size.width,
-      child: Image.asset('images/avartar.png'),
+    return GestureDetector(
+      onTap: () {
+        print('You Click Images');
+        cameraThread();
+      },
+      child: Container(
+        height: MediaQuery.of(context).size.height * 0.3,
+        width: MediaQuery.of(context).size.width,
+        child:
+            file == null ? Image.asset('images/avartar.png') : Image.file(file),
+      ),
     );
+  }
+
+  Future<void> cameraThread() async {
+    try {
+      var object = await ImagePicker.pickImage(
+        source: ImageSource.camera,
+        maxWidth: 800.0,
+        maxHeight: 800.0,
+      );
+      setState(() {
+        file = object;
+      });
+    } catch (e) {}
   }
 
   Widget registerButton() {
