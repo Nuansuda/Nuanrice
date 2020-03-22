@@ -1,7 +1,12 @@
+import 'dart:convert';
+import 'dart:ffi';
 import 'dart:math';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:nuanrice/utility/normal_dialog.dart';
+import 'package:nuanrice/widget/my_service.dart';
 import 'package:nuanrice/widget/register.dart';
 
 class Authen extends StatefulWidget {
@@ -12,14 +17,59 @@ class Authen extends StatefulWidget {
 class _AuthenState extends State<Authen> {
 // Field
 
+  String username, password;
+
 // Method
 
   Widget singInButton() {
     return RaisedButton(
       color: Colors.brown.shade200,
       child: Text('Sign In'),
-      onPressed: () {},
+      onPressed: () {
+        if (username == null ||
+            username.isEmpty ||
+            password == null ||
+            password.isEmpty) {
+          normalDialog(context, 'Have Space', 'Please Your push Data');
+        } else {
+          checkAuthen();
+        }
+      },
     );
+  }
+
+  Future<Void> checkAuthen() async {
+    try {
+      String url =
+          'https://www.androidthai.in.th/rice/getUserWhereUserNuan.php?isAdd=true&Username=$username';
+
+      var response = await Dio().get(url);
+      print('reponse ===>> $response');
+
+      if (response.toString() == 'null') {
+        normalDialog(context, 'User False', 'No $username in my database');
+      } else {
+        var result = json.decode(response.data);
+        print('result ===>> $result');
+
+        for (var map in result) {
+          String truePassword = map['Password'];
+          String nameLogin = map['Name'];
+
+          if (password == truePassword) {
+            MaterialPageRoute route = MaterialPageRoute(
+              builder: (context) => MyServiceState(
+                name: nameLogin,
+              ),
+            );
+            Navigator.of(context).pushAndRemoveUntil(route, (value)=> false);
+          } else {
+            normalDialog(
+                context, 'Password False', 'Please try again password');
+          }
+        }
+      }
+    } catch (e) {}
   }
 
   Widget singUpButton() {
@@ -28,7 +78,7 @@ class _AuthenState extends State<Authen> {
       onPressed: () {
         MaterialPageRoute route =
             MaterialPageRoute(builder: (value) => Register());
-            Navigator.of(context).push(route);
+        Navigator.of(context).push(route);
       },
     );
   }
@@ -55,6 +105,7 @@ class _AuthenState extends State<Authen> {
     return Container(
       width: 280,
       child: TextField(
+        onChanged: (value) => username = value.trim(),
         decoration: InputDecoration(
           labelText: 'Username',
           border: OutlineInputBorder(),
@@ -67,6 +118,7 @@ class _AuthenState extends State<Authen> {
     return Container(
       width: 280,
       child: TextField(
+        onChanged: (value) => password = value.trim(),
         obscureText: true,
         decoration: InputDecoration(
           labelText: 'Password',
