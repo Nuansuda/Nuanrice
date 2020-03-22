@@ -1,6 +1,8 @@
-import 'dart:ffi';
-import 'dart:io';
 
+import 'dart:io';
+import 'dart:math';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nuanrice/utility/normal_dialog.dart';
@@ -129,10 +131,54 @@ class _RegisterState extends State<Register> {
             password == null ||
             password.isEmpty) {
           normalDialog(context, 'Have Space', 'Please Your push Data');
-        } else {}
+        } else {
+          uploadImageToServer();
+
+        }
         {}
       },
     );
+  }
+
+// นี่คือตัวอย่างการอัพโหลดรูปไป server
+
+  Future<void>uploadImageToServer()async{
+
+    try {
+      String url = 'https://www.androidthai.in.th/rice/saveFileNuan.php';
+      Map<String, dynamic> map = Map();
+
+      Random random = Random();
+      int i = random.nextInt(100000);
+
+      map['file'] = UploadFileInfo(file, 'username$i.jpg');
+      FormData formData = FormData.from(map);
+
+
+      var response = await Dio().post(url, data: formData);
+      print('response = ${response.toString()}');
+      urlPath = 'https://www.androidthai.in.th/rice/Nuan/username$i.jpg';
+      inserDataToMySQL();
+  
+    } catch (e) {
+      print('error ==> ${e.toString()}');
+    }
+  }
+
+  Future<void>inserDataToMySQL()async{
+
+    try {
+      String url = 'https://www.androidthai.in.th/rice/addUserNuan.php?isAdd=true&Name=$name&Username=$username&Password=$password&Avartar=$urlPath';
+      var response = await Dio().get(url);
+      if (response.toString()== 'true') {
+        Navigator.of(context).pop();
+        
+        
+      } else {
+        normalDialog(context, 'Cannot Register','Please Try Again');
+      }
+    } catch (e) {
+    }
   }
 
   @override
